@@ -1,0 +1,14 @@
+TISCH:
+
+1. Obere linke Ecke: X=4.3, Y=-2.1
+2. Untere linke Ecke: X=4.3, Y=-3
+3. Obere rechte Ecke: X=5.9 Y=-2.1
+4. Untere rechte Ecke: X=5.9 Y=-3
+
+RAUM: 6x6
+
+LICHTER:
+
+SCHRANK LINKS:
+
+SCHRANK RECHTS:

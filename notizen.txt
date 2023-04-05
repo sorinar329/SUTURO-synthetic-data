@@ -1,0 +1,17 @@
+Kamera-location: Die Cam immer vom 0 Punkt der Szene ausgehend, einfach in blender schauen wo man das ungefähr haben möchte.
+X-Achse der Kamera bewegt sich von circa -1 zu circa -4
+Links vom Tisch ist -1 und Rechts vom Tisch ist -4
+Z-Achse immer gleich. bei 0.8 - 1.2 ?
+Y-Achse bewegt sich von etwa 2 ( vor dem Tisch) bis 5 (fast an Wand).
+
+Wenn der Roboter sich auf der X-Achse bewegt ist es immer bei 2 bis 3 auf der Y-Achse.
+
+3 verschiedene Ranges:
+
+1. X=-1.2, Y= 2.5 bis 5
+2. X=-4, Y= 2.5 bis 5
+3. X=-1 bis -4, Y=2 bis 3
+
+CURRENT POI: [ 4.74285197 -2.58669496  0.89364639]
+
+Plan: Als erstes die Camera Posen erstellen, danach durch eine Schleife durchlaufen um Positionen zu manipulieren.

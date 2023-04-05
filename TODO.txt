@@ -1,0 +1,6 @@
+[] Rotation of Objects
+[] Make the hole thing pipeliny
+[] Create a class for every scene
+[x] Delete entries that are not wanted from coco_annotations.
+[] Adjust category_ids depending on id2json
+[o] Converto to jpynb - Erstmal nicht, weil man script nicht mit python ausführt sondern mit blenderproc.

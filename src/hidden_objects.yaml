@@ -1,0 +1,13 @@
+{
+          "module": "manipulators.EntityManipulator",
+          "config": {
+            "selector": {
+              "provider": "getter.Entity",
+              "conditions": {
+                "name": 'Furniture.*',
+                "type": "MESH"
+              }
+            },
+             "hide_render": True,
+          }
+        }
