@@ -13,6 +13,7 @@ for j, obj in enumerate(objs):
     obj.set_cp("category_id", j+1)
 
 # Initialization of perceiving objects
+furnitures = bproc.filter.by_attr(objs, "name", "Furniture.*", regex=True)
 cracker_box = bproc.filter.one_by_attr(objs, "name", "Cracker_box")
 sugar_box = bproc.filter.one_by_attr(objs, "name", "Sugar_box")
 mustard_bottle = bproc.filter.one_by_attr(objs, "name", "Mustard_bottle")
@@ -103,6 +104,9 @@ for i in range(3):
     seg_data = bproc.renderer.render_segmap(map_by=["instance", "class", "name"])
     # Render the scene
     data = bproc.renderer.render()
+    # Ignores objects for the coco annotations.
+    for obj in furnitures:
+        obj.blender_obj.hide_render = True
     # Write the rendering into an hdf5 file
     bproc.writer.write_coco_annotations(os.path.join("/home/sorin/code/blenderproc/output", 'coco_data'),
                                         instance_segmaps=seg_data["instance_segmaps"],
