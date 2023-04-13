@@ -14,4 +14,7 @@ Wenn der Roboter sich auf der X-Achse bewegt ist es immer bei 2 bis 3 auf der Y-
 
 CURRENT POI: [ 4.74285197 -2.58669496  0.89364639]
 
-Plan: Als erstes die Camera Posen erstellen, danach durch eine Schleife durchlaufen um Positionen zu manipulieren.
+Erste Szene: CrackerBox, TomatoSoup, Pudding, Jello, Mustard, CoffeeCan.
+Zweite Szene: Bowl, TunaFishCan, Spoon, Lemon, Apple, Banana.
+Dritte Szene: Plate, Mug, Knife, Pear, Strawberry, Fork
+
