@@ -7,7 +7,7 @@ import random
 import sys
 sys.path.append("/home/sorin/code/blenderproc/src")
 import utils
-#shutil.rmtree("/home/sorin/code/blenderproc/first_dataset_18_objects_on_table_7k/coco_data")
+
 bproc.init()
 first_list = []
 second_list = []
@@ -15,10 +15,12 @@ third_list = []
 fourth_list = []
 fifth_list = []
 sixth_list = []
-
+rotation = np.random.uniform([0, 0, 0], [0, 0, 6])
 # Create a simple object:
-objs = bproc.loader.load_obj("/home/sorin/data/blenderproc/data/saved_scenes/objects_on_table_final_18_objects.obj")
-
+#objs = bproc.loader.load_obj("/home/sorin/data/blenderproc/data/saved_scenes/objects_on_table_final_18_objects.obj")
+objs = bproc.loader.load_blend("/home/sorin/data/blenderproc/data/saved_scenes/objects_on_table_final_18_objects_new_textures.blend")
+output_path="/home/sorin/code/blenderproc/output"
+shutil.rmtree(output_path + "/coco_data")
 for j, obj in enumerate(objs):
     obj_list = utils.create_list_from_id2json()
     print(obj.get_name())
@@ -88,12 +90,7 @@ light.set_energy(300)
 # Find point of interest, all cam poses should look towards it
 poi = bproc.object.compute_poi(objs)
 print(poi)
-print(first_list)
-print(second_list)
-print(third_list)
-print(fourth_list)
-print(fifth_list)
-print(sixth_list)
+
 def hide_all():
     for item in first_list:
         item.blender_obj.hide_render = True
@@ -143,10 +140,13 @@ def camer_poses(x):
         cam2world_matrix = bproc.math.build_transformation_mat(location, rotation_matrix)
         bproc.camera.add_camera_pose(cam2world_matrix)
 
+def get_initial_position(obj):
+    inital_pos = obj.get_location()
+    return inital_pos
 
 def first_objects(x):
     for i in range(x):
-        first_location = np.random.uniform([0, 0, 0], [1.2, 0, 0])
+        first_location = np.random.uniform([0, 0, 0], [0, 0.7, 0])
         second_location = np.random.uniform([-0.05, 0, 0], [1.05, 0, 0])
         third_location = np.random.uniform([-0.2, 0, 0], [0.9, 0, 0])
         fourth_location = np.random.uniform([-0.35, 0, 0], [0.75, 0, 0])
@@ -157,22 +157,28 @@ def first_objects(x):
 
         far_left_bottom_object = first_list[0]
         far_left_bottom_object.blender_obj.hide_render = False
-        far_left_bottom_object.set_location(first_location)
+        far_left_bottom_object.set_location(get_initial_position(far_left_bottom_object) + first_location)
+        far_left_bottom_object.set_rotation_euler(far_left_bottom_object.get_rotation_euler() + rotation)
         left_bottom_object = second_list[0]
         left_bottom_object.blender_obj.hide_render = False
-        left_bottom_object.set_location(second_location)
+        left_bottom_object.set_location(get_initial_position(left_bottom_object) + second_location)
+        left_bottom_object.set_rotation_euler(left_bottom_object.get_rotation_euler() + rotation)
         mid_left_object = third_list[0]
         mid_left_object.blender_obj.hide_render = False
-        mid_left_object.set_location(third_location)
+        mid_left_object.set_location(get_initial_position(mid_left_object) + third_location)
+        mid_left_object.set_rotation_euler(mid_left_object.get_rotation_euler() + rotation)
         mid_right_object = fourth_list[0]
         mid_right_object.blender_obj.hide_render = False
-        mid_right_object.set_location(fourth_location)
+        mid_right_object.set_location(get_initial_position(mid_right_object) + fourth_location)
+        mid_right_object.set_rotation_euler(mid_right_object.get_rotation_euler() + rotation)
         mid_top_object = fifth_list[0]
         mid_top_object.blender_obj.hide_render = False
-        mid_top_object.set_location(fifth_location)
+        mid_top_object.set_location(get_initial_position(mid_top_object) + fifth_location)
+        mid_top_object.set_rotation_euler(mid_top_object.get_rotation_euler() + rotation)
         far_mid_top_object = sixth_list[0]
         far_mid_top_object.blender_obj.hide_render = False
-        far_mid_top_object.set_location(sixth_location)
+        far_mid_top_object.set_location(get_initial_position(far_mid_top_object) + sixth_location)
+        far_mid_top_object.set_rotation_euler(far_mid_top_object.get_rotation_euler() + rotation)
         # Movement on X-Axis.
 
         for obj in furnitures:
@@ -187,61 +193,67 @@ def first_objects(x):
 
         seg_data = bproc.renderer.render_segmap(map_by=["instance", "class", "name"])
 
-        bproc.writer.write_coco_annotations(os.path.join("/first_dataset_18_objects_on_table_7k", 'coco_data'),
+        bproc.writer.write_coco_annotations(os.path.join(output_path, 'coco_data'),
                                             instance_segmaps=seg_data["instance_segmaps"],
                                             instance_attribute_maps=seg_data["instance_attribute_maps"],
                                             colors=data["colors"],
                                             color_file_format="JPEG")
-        bproc.writer.write_hdf5("output2/", data)
+        bproc.writer.write_hdf5(output_path, data)
 
-    for i in range(x):
-        first_location = np.random.uniform([0, 0, 0], [0, 0.7, 0])
-        second_location = np.random.uniform([0, -0.1, 0], [0, 0.5, 0])
-        third_location = np.random.uniform([0, -0.3, 0], [0, 0.3, 0])
-        fourth_location = np.random.uniform([0, -0.5, 0], [0, 0.1, 0])
-        fifth_location = np.random.uniform([0, -0.6, 0], [0, 0.0, 0])
-        sixth_location = np.random.uniform([0, -0.7, 0], [0, 0, 0])
-        for item in first_list:
-            item.blender_obj.hide_render = True
-
-        hide_all()
-
-        far_left_bottom_object = first_list[0]
-        far_left_bottom_object.blender_obj.hide_render = False
-        far_left_bottom_object.set_location(first_location)
-        left_bottom_object = second_list[0]
-        left_bottom_object.blender_obj.hide_render = False
-        left_bottom_object.set_location(second_location)
-        mid_left_object = third_list[0]
-        mid_left_object.blender_obj.hide_render = False
-        mid_left_object.set_location(third_location)
-        mid_right_object = fourth_list[0]
-        mid_right_object.blender_obj.hide_render = False
-        mid_right_object.set_location(fourth_location)
-        mid_top_object = fifth_list[0]
-        mid_top_object.blender_obj.hide_render = False
-        mid_top_object.set_location(fifth_location)
-        far_mid_top_object = sixth_list[0]
-        far_mid_top_object.blender_obj.hide_render = False
-        far_mid_top_object.set_location(sixth_location)
-        # Movement on X-Axis.
-
-        for obj in furnitures:
-            obj.blender_obj.hide_render = False
-        # Render the scene
-        data = bproc.renderer.render()
-        # Ignores objects for the coco annotations.
-        for obj in furnitures:
-            obj.blender_obj.hide_render = True
-
-        seg_data = bproc.renderer.render_segmap(map_by=["instance", "class", "name"])
-        # Write the rendering into an hdf5 file
-        bproc.writer.write_coco_annotations(os.path.join("/first_dataset_18_objects_on_table_7k", 'coco_data'),
-                                            instance_segmaps=seg_data["instance_segmaps"],
-                                            instance_attribute_maps=seg_data["instance_attribute_maps"],
-                                            colors=data["colors"],
-                                            color_file_format="JPEG")
-        bproc.writer.write_hdf5("first_dataset_18_objects_on_table_7k/", data)
+    # for i in range(x):
+    #     first_location = np.random.uniform([0, 0, 0], [0, 0.7, 0])
+    #     second_location = np.random.uniform([0, -0.1, 0], [0, 0.5, 0])
+    #     third_location = np.random.uniform([0, -0.3, 0], [0, 0.3, 0])
+    #     fourth_location = np.random.uniform([0, -0.5, 0], [0, 0.1, 0])
+    #     fifth_location = np.random.uniform([0, -0.6, 0], [0, 0.0, 0])
+    #     sixth_location = np.random.uniform([0, -0.7, 0], [0, 0, 0])
+    #     for item in first_list:
+    #         item.blender_obj.hide_render = True
+    #
+    #     hide_all()
+    #
+    #     far_left_bottom_object = first_list[0]
+    #     far_left_bottom_object.blender_obj.hide_render = False
+    #     far_left_bottom_object.set_location(far_left_bottom_object.get_location() + first_location)
+    #     far_left_bottom_object.set_rotation_euler(far_left_bottom_object.get_rotation_euler() + rotation)
+    #     left_bottom_object = second_list[0]
+    #     left_bottom_object.blender_obj.hide_render = False
+    #     left_bottom_object.set_location(left_bottom_object.get_location() + second_location)
+    #     left_bottom_object.set_rotation_euler(left_bottom_object.get_rotation_euler() + rotation)
+    #     mid_left_object = third_list[0]
+    #     mid_left_object.blender_obj.hide_render = False
+    #     mid_left_object.set_location(mid_left_object.get_location() + third_location)
+    #     mid_left_object.set_rotation_euler(mid_left_object.get_rotation_euler() + rotation)
+    #     mid_right_object = fourth_list[0]
+    #     mid_right_object.blender_obj.hide_render = False
+    #     mid_right_object.set_location(mid_right_object.get_location() + fourth_location)
+    #     mid_right_object.set_rotation_euler(mid_right_object.get_rotation_euler() + rotation)
+    #     mid_top_object = fifth_list[0]
+    #     mid_top_object.blender_obj.hide_render = False
+    #     mid_top_object.set_location(mid_top_object.get_location() + fifth_location)
+    #     mid_top_object.set_rotation_euler(mid_top_object.get_rotation_euler() + rotation)
+    #     far_mid_top_object = sixth_list[0]
+    #     far_mid_top_object.blender_obj.hide_render = False
+    #     far_mid_top_object.set_location(far_mid_top_object.get_location() + sixth_location)
+    #     far_mid_top_object.set_rotation_euler(far_mid_top_object.get_rotation_euler() + rotation)
+    #     # Movement on X-Axis.
+    #
+    #     for obj in furnitures:
+    #         obj.blender_obj.hide_render = False
+    #     # Render the scene
+    #     data = bproc.renderer.render()
+    #     # Ignores objects for the coco annotations.
+    #     for obj in furnitures:
+    #         obj.blender_obj.hide_render = True
+    #
+    #     seg_data = bproc.renderer.render_segmap(map_by=["instance", "class", "name"])
+    #     # Write the rendering into an hdf5 file
+    #     bproc.writer.write_coco_annotations(os.path.join(output_path, 'coco_data'),
+    #                                         instance_segmaps=seg_data["instance_segmaps"],
+    #                                         instance_attribute_maps=seg_data["instance_attribute_maps"],
+    #                                         colors=data["colors"],
+    #                                         color_file_format="JPEG")
+    #     bproc.writer.write_hdf5(output_path, data)
 
 def second_objects(x):
     for i in range(x):
@@ -254,24 +266,30 @@ def second_objects(x):
 
         hide_all()
 
-        far_left_bottom_object = first_list[1]
+        far_left_bottom_object = first_list[0]
         far_left_bottom_object.blender_obj.hide_render = False
-        far_left_bottom_object.set_location(first_location)
-        left_bottom_object = second_list[1]
+        far_left_bottom_object.set_location(far_left_bottom_object.get_location() + first_location)
+        far_left_bottom_object.set_rotation_euler(far_left_bottom_object.get_rotation_euler() + rotation)
+        left_bottom_object = second_list[0]
         left_bottom_object.blender_obj.hide_render = False
-        left_bottom_object.set_location(second_location)
-        mid_left_object = third_list[1]
+        left_bottom_object.set_location(left_bottom_object.get_location() + second_location)
+        left_bottom_object.set_rotation_euler(left_bottom_object.get_rotation_euler() + rotation)
+        mid_left_object = third_list[0]
         mid_left_object.blender_obj.hide_render = False
-        mid_left_object.set_location(third_location)
-        mid_right_object = fourth_list[1]
+        mid_left_object.set_location(mid_left_object.get_location() + third_location)
+        mid_left_object.set_rotation_euler(mid_left_object.get_rotation_euler() + rotation)
+        mid_right_object = fourth_list[0]
         mid_right_object.blender_obj.hide_render = False
-        mid_right_object.set_location(fourth_location)
-        mid_top_object = fifth_list[1]
+        mid_right_object.set_location(mid_right_object.get_location() + fourth_location)
+        mid_right_object.set_rotation_euler(mid_right_object.get_rotation_euler() + rotation)
+        mid_top_object = fifth_list[0]
         mid_top_object.blender_obj.hide_render = False
-        mid_top_object.set_location(fifth_location)
-        far_mid_top_object = sixth_list[1]
+        mid_top_object.set_location(mid_top_object.get_location() + fifth_location)
+        mid_top_object.set_rotation_euler(mid_top_object.get_rotation_euler() + rotation)
+        far_mid_top_object = sixth_list[0]
         far_mid_top_object.blender_obj.hide_render = False
-        far_mid_top_object.set_location(sixth_location)
+        far_mid_top_object.set_location(far_mid_top_object.get_location() + sixth_location)
+        far_mid_top_object.set_rotation_euler(far_mid_top_object.get_rotation_euler() + rotation)
 
         # Movement on X-Axis.
 
@@ -287,12 +305,12 @@ def second_objects(x):
 
         seg_data = bproc.renderer.render_segmap(map_by=["instance", "class", "name"])
 
-        bproc.writer.write_coco_annotations(os.path.join("/first_dataset_18_objects_on_table_7k", 'coco_data'),
+        bproc.writer.write_coco_annotations(os.path.join(output_path, 'coco_data'),
                                             instance_segmaps=seg_data["instance_segmaps"],
                                             instance_attribute_maps=seg_data["instance_attribute_maps"],
                                             colors=data["colors"],
                                             color_file_format="JPEG")
-        bproc.writer.write_hdf5("output2/", data)
+        bproc.writer.write_hdf5(output_path, data)
 
     for i in range(x):
         first_location = np.random.uniform([0, 0, 0], [0, 0.7, 0])
@@ -304,24 +322,30 @@ def second_objects(x):
 
         hide_all()
 
-        far_left_bottom_object = first_list[1]
+        far_left_bottom_object = first_list[0]
         far_left_bottom_object.blender_obj.hide_render = False
-        far_left_bottom_object.set_location(first_location)
-        left_bottom_object = second_list[1]
+        far_left_bottom_object.set_location(far_left_bottom_object.get_location() + first_location)
+        far_left_bottom_object.set_rotation_euler(far_left_bottom_object.get_rotation_euler() + rotation)
+        left_bottom_object = second_list[0]
         left_bottom_object.blender_obj.hide_render = False
-        left_bottom_object.set_location(second_location)
-        mid_left_object = third_list[1]
+        left_bottom_object.set_location(left_bottom_object.get_location() + second_location)
+        left_bottom_object.set_rotation_euler(left_bottom_object.get_rotation_euler() + rotation)
+        mid_left_object = third_list[0]
         mid_left_object.blender_obj.hide_render = False
-        mid_left_object.set_location(third_location)
-        mid_right_object = fourth_list[1]
+        mid_left_object.set_location(mid_left_object.get_location() + third_location)
+        mid_left_object.set_rotation_euler(mid_left_object.get_rotation_euler() + rotation)
+        mid_right_object = fourth_list[0]
         mid_right_object.blender_obj.hide_render = False
-        mid_right_object.set_location(fourth_location)
-        mid_top_object = fifth_list[1]
+        mid_right_object.set_location(mid_right_object.get_location() + fourth_location)
+        mid_right_object.set_rotation_euler(mid_right_object.get_rotation_euler() + rotation)
+        mid_top_object = fifth_list[0]
         mid_top_object.blender_obj.hide_render = False
-        mid_top_object.set_location(fifth_location)
-        far_mid_top_object = sixth_list[1]
+        mid_top_object.set_location(mid_top_object.get_location() + fifth_location)
+        mid_top_object.set_rotation_euler(mid_top_object.get_rotation_euler() + rotation)
+        far_mid_top_object = sixth_list[0]
         far_mid_top_object.blender_obj.hide_render = False
-        far_mid_top_object.set_location(sixth_location)
+        far_mid_top_object.set_location(far_mid_top_object.get_location() + sixth_location)
+        far_mid_top_object.set_rotation_euler(far_mid_top_object.get_rotation_euler() + rotation)
         # Movement on X-Axis.
 
         for obj in furnitures:
@@ -334,12 +358,12 @@ def second_objects(x):
 
         seg_data = bproc.renderer.render_segmap(map_by=["instance", "class", "name"])
         # Write the rendering into an hdf5 file
-        bproc.writer.write_coco_annotations(os.path.join("/first_dataset_18_objects_on_table_7k", 'coco_data'),
+        bproc.writer.write_coco_annotations(os.path.join(output_path, 'coco_data'),
                                             instance_segmaps=seg_data["instance_segmaps"],
                                             instance_attribute_maps=seg_data["instance_attribute_maps"],
                                             colors=data["colors"],
                                             color_file_format="JPEG")
-        bproc.writer.write_hdf5("first_dataset_18_objects_on_table_7k/", data)
+        bproc.writer.write_hdf5(output_path, data)
 
 
 def third_objects(x):
@@ -353,24 +377,30 @@ def third_objects(x):
 
         hide_all()
 
-        far_left_bottom_object = first_list[2]
+        far_left_bottom_object = first_list[0]
         far_left_bottom_object.blender_obj.hide_render = False
-        far_left_bottom_object.set_location(first_location)
-        left_bottom_object = second_list[2]
+        far_left_bottom_object.set_location(far_left_bottom_object.get_location() + first_location)
+        far_left_bottom_object.set_rotation_euler(far_left_bottom_object.get_rotation_euler() + rotation)
+        left_bottom_object = second_list[0]
         left_bottom_object.blender_obj.hide_render = False
-        left_bottom_object.set_location(second_location)
-        mid_left_object = third_list[2]
+        left_bottom_object.set_location(left_bottom_object.get_location() + second_location)
+        left_bottom_object.set_rotation_euler(left_bottom_object.get_rotation_euler() + rotation)
+        mid_left_object = third_list[0]
         mid_left_object.blender_obj.hide_render = False
-        mid_left_object.set_location(third_location)
-        mid_right_object = fourth_list[2]
+        mid_left_object.set_location(mid_left_object.get_location() + third_location)
+        mid_left_object.set_rotation_euler(mid_left_object.get_rotation_euler() + rotation)
+        mid_right_object = fourth_list[0]
         mid_right_object.blender_obj.hide_render = False
-        mid_right_object.set_location(fourth_location)
-        mid_top_object = fifth_list[2]
+        mid_right_object.set_location(mid_right_object.get_location() + fourth_location)
+        mid_right_object.set_rotation_euler(mid_right_object.get_rotation_euler() + rotation)
+        mid_top_object = fifth_list[0]
         mid_top_object.blender_obj.hide_render = False
-        mid_top_object.set_location(fifth_location)
-        far_mid_top_object = sixth_list[2]
+        mid_top_object.set_location(mid_top_object.get_location() + fifth_location)
+        mid_top_object.set_rotation_euler(mid_top_object.get_rotation_euler() + rotation)
+        far_mid_top_object = sixth_list[0]
         far_mid_top_object.blender_obj.hide_render = False
-        far_mid_top_object.set_location(sixth_location)
+        far_mid_top_object.set_location(far_mid_top_object.get_location() + sixth_location)
+        far_mid_top_object.set_rotation_euler(far_mid_top_object.get_rotation_euler() + rotation)
         # Movement on X-Axis.
 
         for obj in furnitures:
@@ -385,12 +415,12 @@ def third_objects(x):
 
         seg_data = bproc.renderer.render_segmap(map_by=["instance", "class", "name"])
 
-        bproc.writer.write_coco_annotations(os.path.join("/first_dataset_18_objects_on_table_7k", 'coco_data'),
+        bproc.writer.write_coco_annotations(os.path.join(output_path, 'coco_data'),
                                             instance_segmaps=seg_data["instance_segmaps"],
                                             instance_attribute_maps=seg_data["instance_attribute_maps"],
                                             colors=data["colors"],
                                             color_file_format="JPEG")
-        bproc.writer.write_hdf5("output2/", data)
+        bproc.writer.write_hdf5(output_path, data)
 
     for i in range(x):
         first_location = np.random.uniform([0, 0, 0], [0, 0.7, 0])
@@ -404,24 +434,30 @@ def third_objects(x):
 
         hide_all()
 
-        far_left_bottom_object = first_list[2]
+        far_left_bottom_object = first_list[0]
         far_left_bottom_object.blender_obj.hide_render = False
-        far_left_bottom_object.set_location(first_location)
-        left_bottom_object = second_list[2]
+        far_left_bottom_object.set_location(far_left_bottom_object.get_location() + first_location)
+        far_left_bottom_object.set_rotation_euler(far_left_bottom_object.get_rotation_euler() + rotation)
+        left_bottom_object = second_list[0]
         left_bottom_object.blender_obj.hide_render = False
-        left_bottom_object.set_location(second_location)
-        mid_left_object = third_list[2]
+        left_bottom_object.set_location(left_bottom_object.get_location() + second_location)
+        left_bottom_object.set_rotation_euler(left_bottom_object.get_rotation_euler() + rotation)
+        mid_left_object = third_list[0]
         mid_left_object.blender_obj.hide_render = False
-        mid_left_object.set_location(third_location)
-        mid_right_object = fourth_list[2]
+        mid_left_object.set_location(mid_left_object.get_location() + third_location)
+        mid_left_object.set_rotation_euler(mid_left_object.get_rotation_euler() + rotation)
+        mid_right_object = fourth_list[0]
         mid_right_object.blender_obj.hide_render = False
-        mid_right_object.set_location(fourth_location)
-        mid_top_object = fifth_list[2]
+        mid_right_object.set_location(mid_right_object.get_location() + fourth_location)
+        mid_right_object.set_rotation_euler(mid_right_object.get_rotation_euler() + rotation)
+        mid_top_object = fifth_list[0]
         mid_top_object.blender_obj.hide_render = False
-        mid_top_object.set_location(fifth_location)
-        far_mid_top_object = sixth_list[2]
+        mid_top_object.set_location(mid_top_object.get_location() + fifth_location)
+        mid_top_object.set_rotation_euler(mid_top_object.get_rotation_euler() + rotation)
+        far_mid_top_object = sixth_list[0]
         far_mid_top_object.blender_obj.hide_render = False
-        far_mid_top_object.set_location(sixth_location)
+        far_mid_top_object.set_location(far_mid_top_object.get_location() + sixth_location)
+        far_mid_top_object.set_rotation_euler(far_mid_top_object.get_rotation_euler() + rotation)
         # Movement on X-Axis.
 
         for obj in furnitures:
@@ -434,12 +470,12 @@ def third_objects(x):
 
         seg_data = bproc.renderer.render_segmap(map_by=["instance", "class", "name"])
         # Write the rendering into an hdf5 file
-        bproc.writer.write_coco_annotations(os.path.join("/first_dataset_18_objects_on_table_7k", 'coco_data'),
+        bproc.writer.write_coco_annotations(os.path.join(output_path, 'coco_data'),
                                             instance_segmaps=seg_data["instance_segmaps"],
                                             instance_attribute_maps=seg_data["instance_attribute_maps"],
                                             colors=data["colors"],
                                             color_file_format="JPEG")
-        bproc.writer.write_hdf5("first_dataset_18_objects_on_table_7k/", data)
+        bproc.writer.write_hdf5(output_path, data)
 
 
 def random_objects(x):
@@ -453,24 +489,30 @@ def random_objects(x):
 
         hide_all()
 
-        far_left_bottom_object = random.choice(first_list)
+        far_left_bottom_object = first_list[0]
         far_left_bottom_object.blender_obj.hide_render = False
-        far_left_bottom_object.set_location(first_location)
-        left_bottom_object = random.choice(second_list)
+        far_left_bottom_object.set_location(far_left_bottom_object.get_location() + first_location)
+        far_left_bottom_object.set_rotation_euler(far_left_bottom_object.get_rotation_euler() + rotation)
+        left_bottom_object = second_list[0]
         left_bottom_object.blender_obj.hide_render = False
-        left_bottom_object.set_location(second_location)
-        mid_left_object = random.choice(third_list)
+        left_bottom_object.set_location(left_bottom_object.get_location() + second_location)
+        left_bottom_object.set_rotation_euler(left_bottom_object.get_rotation_euler() + rotation)
+        mid_left_object = third_list[0]
         mid_left_object.blender_obj.hide_render = False
-        mid_left_object.set_location(third_location)
-        mid_right_object = random.choice(fourth_list)
+        mid_left_object.set_location(mid_left_object.get_location() + third_location)
+        mid_left_object.set_rotation_euler(mid_left_object.get_rotation_euler() + rotation)
+        mid_right_object = fourth_list[0]
         mid_right_object.blender_obj.hide_render = False
-        mid_right_object.set_location(fourth_location)
-        mid_top_object = random.choice(fifth_list)
+        mid_right_object.set_location(mid_right_object.get_location() + fourth_location)
+        mid_right_object.set_rotation_euler(mid_right_object.get_rotation_euler() + rotation)
+        mid_top_object = fifth_list[0]
         mid_top_object.blender_obj.hide_render = False
-        mid_top_object.set_location(fifth_location)
-        far_mid_top_object = random.choice(sixth_list)
+        mid_top_object.set_location(mid_top_object.get_location() + fifth_location)
+        mid_top_object.set_rotation_euler(mid_top_object.get_rotation_euler() + rotation)
+        far_mid_top_object = sixth_list[0]
         far_mid_top_object.blender_obj.hide_render = False
-        far_mid_top_object.set_location(sixth_location)
+        far_mid_top_object.set_location(far_mid_top_object.get_location() + sixth_location)
+        far_mid_top_object.set_rotation_euler(far_mid_top_object.get_rotation_euler() + rotation)
         # Movement on X-Axis.
 
         for obj in furnitures:
@@ -485,12 +527,12 @@ def random_objects(x):
 
         seg_data = bproc.renderer.render_segmap(map_by=["instance", "class", "name"])
 
-        bproc.writer.write_coco_annotations(os.path.join("/first_dataset_18_objects_on_table_7k", 'coco_data'),
+        bproc.writer.write_coco_annotations(os.path.join(output_path, 'coco_data'),
                                             instance_segmaps=seg_data["instance_segmaps"],
                                             instance_attribute_maps=seg_data["instance_attribute_maps"],
                                             colors=data["colors"],
                                             color_file_format="JPEG")
-        bproc.writer.write_hdf5("output2/", data)
+        bproc.writer.write_hdf5(output_path, data)
 
     for i in range(x):
         first_location = np.random.uniform([0, 0, 0], [0, 0.7, 0])
@@ -503,24 +545,30 @@ def random_objects(x):
 
         hide_all()
 
-        far_left_bottom_object = random.choice(first_list)
+        far_left_bottom_object = first_list[0]
         far_left_bottom_object.blender_obj.hide_render = False
-        far_left_bottom_object.set_location(first_location)
-        left_bottom_object = random.choice(second_list)
+        far_left_bottom_object.set_location(far_left_bottom_object.get_location() + first_location)
+        far_left_bottom_object.set_rotation_euler(far_left_bottom_object.get_rotation_euler() + rotation)
+        left_bottom_object = second_list[0]
         left_bottom_object.blender_obj.hide_render = False
-        left_bottom_object.set_location(second_location)
-        mid_left_object = random.choice(third_list)
+        left_bottom_object.set_location(left_bottom_object.get_location() + second_location)
+        left_bottom_object.set_rotation_euler(left_bottom_object.get_rotation_euler() + rotation)
+        mid_left_object = third_list[0]
         mid_left_object.blender_obj.hide_render = False
-        mid_left_object.set_location(third_location)
-        mid_right_object = random.choice(fourth_list)
+        mid_left_object.set_location(mid_left_object.get_location() + third_location)
+        mid_left_object.set_rotation_euler(mid_left_object.get_rotation_euler() + rotation)
+        mid_right_object = fourth_list[0]
         mid_right_object.blender_obj.hide_render = False
-        mid_right_object.set_location(fourth_location)
-        mid_top_object = random.choice(fifth_list)
+        mid_right_object.set_location(mid_right_object.get_location() + fourth_location)
+        mid_right_object.set_rotation_euler(mid_right_object.get_rotation_euler() + rotation)
+        mid_top_object = fifth_list[0]
         mid_top_object.blender_obj.hide_render = False
-        mid_top_object.set_location(fifth_location)
-        far_mid_top_object = random.choice(sixth_list)
+        mid_top_object.set_location(mid_top_object.get_location() + fifth_location)
+        mid_top_object.set_rotation_euler(mid_top_object.get_rotation_euler() + rotation)
+        far_mid_top_object = sixth_list[0]
         far_mid_top_object.blender_obj.hide_render = False
-        far_mid_top_object.set_location(sixth_location)
+        far_mid_top_object.set_location(far_mid_top_object.get_location() + sixth_location)
+        far_mid_top_object.set_rotation_euler(far_mid_top_object.get_rotation_euler() + rotation)
         # Movement on X-Axis.
 
         for obj in furnitures:
@@ -533,19 +581,19 @@ def random_objects(x):
 
         seg_data = bproc.renderer.render_segmap(map_by=["instance", "class", "name"])
         # Write the rendering into an hdf5 file
-        bproc.writer.write_coco_annotations(os.path.join("/first_dataset_18_objects_on_table_7k", 'coco_data'),
+        bproc.writer.write_coco_annotations(os.path.join(output_path, 'coco_data'),
                                             instance_segmaps=seg_data["instance_segmaps"],
                                             instance_attribute_maps=seg_data["instance_attribute_maps"],
                                             colors=data["colors"],
                                             color_file_format="JPEG")
-        bproc.writer.write_hdf5("first_dataset_18_objects_on_table_7k/", data)
+        bproc.writer.write_hdf5(output_path, data)
 
 
 def pipeline():
-    camer_poses(15)
-    first_objects(20)
-    second_objects(20)
-    third_objects(20)
-    random_objects(20)
+    camer_poses(1)
+    first_objects(10)
+    #second_objects(20)
+    #third_objects(20)
+    #random_objects(10)
 
 pipeline()

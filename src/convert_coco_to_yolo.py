@@ -79,11 +79,11 @@ def convert_coco_to_yolo():
 
 
 def rename_images():
-    data = sorted(os.listdir("/home/sorin/data/blenderproc/data/yolo_dataset/12-04-2023/images"))
+    data = sorted(os.listdir("/home/sorin/data/blenderproc/data/yolo_dataset/13-04-2023/images"))
     i = 0
     for d in data:
-        os.rename("/home/sorin/data/blenderproc/data/yolo_dataset/12-04-2023/images/" + d,
-                  "/home/sorin/data/blenderproc/data/yolo_dataset/12-04-2023/images/" + "image" + str(i) + ".jpg")
+        os.rename("/home/sorin/data/blenderproc/data/yolo_dataset/13-04-2023/images/" + d,
+                  "/home/sorin/data/blenderproc/data/yolo_dataset/13-04-2023/images/" + "image" + str(i) + ".jpg")
         i = i + 1
 
 
@@ -134,15 +134,18 @@ def trainsplit(path_source):
     move_files_to_folder(test_annotations, path_source + "test/labels")
 
 
-trainsplit(path_source="/home/sorin/data/blenderproc/data/yolo_dataset/12-04-2023/")
-create_list_from_categories()
+#trainsplit(path_source="/home/sorin/data/blenderproc/data/yolo_dataset/13-04-2023/")
+#create_list_from_categories()
 #convert_coco_to_yolo()
 #rename_images()
 def pipeline():
     # mkdir for the dataset with the name based by date
-    convert_coco_to_yolo() #convert from output coco
+    #convert_coco_to_yolo() #convert from output coco
     # cp images from output to new created directory
     rename_images() #rename images to make them consistent to the annotations
+    trainsplit(path_source="/home/sorin/data/blenderproc/data/yolo_dataset/13-04-2023/")
     # trainsplit() needs more parametrization
     # create data.yaml for the training
     # optional start training
+
+pipeline()
