@@ -44,17 +44,17 @@ def convert_bbox_coco2yolo(img_width, img_height, bbox):
     return [x, y, w, h]
 
 
-def convert_coco_to_yolo():
-    f = open("/first_dataset_18_objects_on_table_7k/coco_data/coco_annotations.json")
+def convert_coco_to_yolo(j=0):
+    f = open("/home/sorin/code/blenderproc/output/coco_data/coco_annotations.json")
     data = json.load(f)
     anns = data["annotations"]
-    i = 0
     lines = []
+    i=0
     for ann in anns:
         img_id = ann["image_id"]
         if img_id == i:
             bbox = ann["bbox"]
-            c = convert_bbox_coco2yolo(512, 512, bbox)
+            c = convert_bbox_coco2yolo(640, 480, bbox)
             coordinates = str(c).replace('[', '').replace(']', '').replace(',', '')
             id = ann["category_id"]
             print(str(id) + " " + coordinates)
@@ -63,13 +63,13 @@ def convert_coco_to_yolo():
             print("c")
         elif img_id == i + 1:
             print("a")
-            with open('/home/sorin/data/blenderproc/data/yolo_dataset/12-04-2023/labels/image' + str(img_id - 1) + '.txt', 'w') as f:
+            with open('/home/sorin/data/blenderproc/data/yolo_dataset/19_04_2023/labels/image' + str(img_id - 1 + j) + '.txt', 'w') as f:
                 for line in lines:
                     f.write(line)
             print(lines)
             lines = []
             bbox = ann["bbox"]
-            c = convert_bbox_coco2yolo(512, 512, bbox)
+            c = convert_bbox_coco2yolo(640, 480, bbox)
             coordinates = str(c).replace('[', '').replace(']', '').replace(',', '')
             id = ann["category_id"]
             print(str(id) + " " + coordinates)
@@ -78,12 +78,11 @@ def convert_coco_to_yolo():
             i = i + 1
 
 
-def rename_images():
-    data = sorted(os.listdir("/home/sorin/data/blenderproc/data/yolo_dataset/13-04-2023/images"))
-    i = 0
+def rename_images(i=0):
+    data = sorted(os.listdir("/home/sorin/data/blenderproc/data/yolo_dataset/19_04_2023/images"))
     for d in data:
-        os.rename("/home/sorin/data/blenderproc/data/yolo_dataset/13-04-2023/images/" + d,
-                  "/home/sorin/data/blenderproc/data/yolo_dataset/13-04-2023/images/" + "image" + str(i) + ".jpg")
+        os.rename("/home/sorin/data/blenderproc/data/yolo_dataset/19_04_2023/images/" + d,
+                  "/home/sorin/data/blenderproc/data/yolo_dataset/19_04_2023/images/" + "image" + str(i) + ".jpg")
         i = i + 1
 
 
@@ -140,10 +139,10 @@ def trainsplit(path_source):
 #rename_images()
 def pipeline():
     # mkdir for the dataset with the name based by date
-    #convert_coco_to_yolo() #convert from output coco
+    #convert_coco_to_yolo(j=8000) #convert from output coco
     # cp images from output to new created directory
-    rename_images() #rename images to make them consistent to the annotations
-    trainsplit(path_source="/home/sorin/data/blenderproc/data/yolo_dataset/13-04-2023/")
+    #rename_images(i=8000) #rename images to make them consistent to the annotations
+    trainsplit(path_source="/home/sorin/data/blenderproc/data/yolo_dataset/19_04_2023/")
     # trainsplit() needs more parametrization
     # create data.yaml for the training
     # optional start training
