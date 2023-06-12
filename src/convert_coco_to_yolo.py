@@ -3,6 +3,7 @@ import os
 import cv2
 import json
 import shutil
+import utils
 from sklearn.model_selection import train_test_split
 
 
@@ -45,7 +46,7 @@ def convert_bbox_coco2yolo(img_width, img_height, bbox):
 
 
 def convert_coco_to_yolo(j=0):
-    f = open("/home/sorin/code/blenderproc/output/coco_data/coco_annotations.json")
+    f = open("/home/sorin/code/blenderproc/storing_groceries_28-04-2023/coco_data/coco_annotations.json")
     data = json.load(f)
     anns = data["annotations"]
     lines = []
@@ -57,32 +58,35 @@ def convert_coco_to_yolo(j=0):
             c = convert_bbox_coco2yolo(640, 480, bbox)
             coordinates = str(c).replace('[', '').replace(']', '').replace(',', '')
             id = ann["category_id"]
-            print(str(id) + " " + coordinates)
+            #print(str(id) + " " + coordinates)
             line = str(id) + " " + str(coordinates) + "\n"
             lines.append(line)
-            print("c")
+            #print("c")
         elif img_id == i + 1:
-            print("a")
-            with open('/home/sorin/data/blenderproc/data/yolo_dataset/19_04_2023/labels/image' + str(img_id - 1 + j) + '.txt', 'w') as f:
+            #print("a")
+            with open('/home/sorin/data/storing_groceries/labels/image' + str(img_id - 1 + j) + '.txt', 'w') as f:
                 for line in lines:
                     f.write(line)
-            print(lines)
+            #print(lines)
             lines = []
             bbox = ann["bbox"]
             c = convert_bbox_coco2yolo(640, 480, bbox)
             coordinates = str(c).replace('[', '').replace(']', '').replace(',', '')
             id = ann["category_id"]
-            print(str(id) + " " + coordinates)
+            #print(str(id) + " " + coordinates)
             line = str(id) + " " + str(coordinates) + "\n"
             lines.append(line)
+            i = i + 1
+        else:
+            print(i)
             i = i + 1
 
 
 def rename_images(i=0):
-    data = sorted(os.listdir("/home/sorin/data/blenderproc/data/yolo_dataset/19_04_2023/images"))
+    data = sorted(os.listdir("/home/sorin/data/storing_groceries/images/"))
     for d in data:
-        os.rename("/home/sorin/data/blenderproc/data/yolo_dataset/19_04_2023/images/" + d,
-                  "/home/sorin/data/blenderproc/data/yolo_dataset/19_04_2023/images/" + "image" + str(i) + ".jpg")
+        os.rename("/home/sorin/data/storing_groceries/images/" + d,
+                  "/home/sorin/data/storing_groceries/images/" + "image" + str(i) + ".jpg")
         i = i + 1
 
 
@@ -133,18 +137,13 @@ def trainsplit(path_source):
     move_files_to_folder(test_annotations, path_source + "test/labels")
 
 
-#trainsplit(path_source="/home/sorin/data/blenderproc/data/yolo_dataset/13-04-2023/")
-#create_list_from_categories()
-#convert_coco_to_yolo()
-#rename_images()
-def pipeline():
-    # mkdir for the dataset with the name based by date
-    #convert_coco_to_yolo(j=8000) #convert from output coco
-    # cp images from output to new created directory
-    #rename_images(i=8000) #rename images to make them consistent to the annotations
-    trainsplit(path_source="/home/sorin/data/blenderproc/data/yolo_dataset/19_04_2023/")
-    # trainsplit() needs more parametrization
-    # create data.yaml for the training
-    # optional start training
+def pipeline_from_output_to_yolo():
+    utils.convert_coco_to_yolo("/home/sorin/code/blenderproc/output/coco_data/coco_annotations.json", "/home/sorin/data/test")
+    utils.move_images_to_new_dir("/home/sorin/code/blenderproc/output/coco_data/images/", "/home/sorin/data/test")
+    # TODO: Einfügen einer Funktion um das letzte Element zu löschen.
+    utils.rename_images(path="/home/sorin/data/test/images/", i = 0)
+    utils.trainsplit("/home/sorin/data/test" + "/")
+    utils.write_data_yaml("/home/sorin/code/blenderproc/data/id2name.json", "/home/sorin/data/test")
 
-pipeline()
+
+pipeline_from_output_to_yolo()

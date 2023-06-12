@@ -524,6 +524,6 @@ def pipeline():
     #first_objects(2)
     #second_objects(2)
     #third_objects(2)
-    random_objects(2)
+    random_objects(3)
 
 pipeline()
