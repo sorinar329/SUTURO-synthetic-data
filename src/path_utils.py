@@ -1,15 +1,24 @@
 from pathlib import Path
 
 
+def get_project_root():
+    """Return the root directory of the project."""
+    p = Path.cwd()
+    while p.stem != "SUTURO-synthetic-data":
+        p = p.parent
+
+    return p
+
+
 def get_path_id2name_json():
-    p = Path.cwd().joinpath("../", "data", "id2name.json")
+    p = Path.cwd().joinpath(get_project_root(), "data", "id2name.json")
     if not p.exists():
         raise Exception("id2name.json doesn't exist")
-    return Path.cwd().joinpath("../", "data", "id2name.json")
+    return p
 
 
 def get_path_yaml_config(filename):
-    p = Path.cwd().joinpath("../", "data/yaml", filename)
+    p = Path.cwd().joinpath(get_project_root(), "data/yaml", filename)
     if p.suffix != ".yaml":
         p = p.with_suffix(".yaml")
         if p.is_file():
@@ -34,7 +43,7 @@ def get_project_src_dir():
 
 
 def get_path_output_dir():
-    p = Path.cwd().joinpath("../", "output")
+    p = Path.cwd().joinpath(get_project_root(), "output")
     if not p.exists():
         Path(p).mkdir(parents=True)
     return p
