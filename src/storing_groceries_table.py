@@ -43,9 +43,11 @@ def init_objects():
     banana = bproc.filter.one_by_attr(objs, "name", "Banana")
     milk = bproc.filter.one_by_attr(objs, "name", "MilkPack")
     cereal_box = bproc.filter.one_by_attr(objs, "name", "CerealBox")
+    bowl = bproc.filter.one_by_attr(objs, "name", "Bowl")
+    spoon = bproc.filter.one_by_attr(objs, "name", "Spoon")
 
     list_of_objects = [cracker_box, tuna_can, tomato_soup, pudding_box, pear, lemon, gelatine_box, apple, strawberry,
-                       mustard_bottle, coffe_can, banana, milk, cereal_box]
+                       mustard_bottle, coffe_can, banana, milk, cereal_box, spoon, bowl]
 
     return list_of_objects
 
@@ -92,15 +94,16 @@ def room_light(strength):
     light8.set_energy(strength)
 
 
-room_light(110)
+room_light(50)
 
-poi = [4.4, -2.5, 0.9]
+poi = [4.5, -2.5, 0.9]
 bproc.camera.set_resolution(640, 480)
 print(poi)
 
 locations= [[3.6, -2.0, 1.2], [3.6, -2.3, 1.2], [3.6, -2.6, 1.2], [3.6, -2.9, 1.2], [3.6, -2.0, 1.2], [3.6, -2.3, 1.2],
            [3.6, -2.6, 1.5], [3.6, -2.9, 1.5], [3.8, -2.0, 1.0], [3.8, -2.3, 1.0], [3.8, -2.6, 1.0], [3.8, -2.9, 1.0],
            [3.8, -2.0, 1.5], [3.8, -2.3, 1.5], [3.8, -2.6, 1.5], [3.8, -2.9, 1.5]]
+
 def hide():
     for item in lob:
         item.blender_obj.hide_render = True
