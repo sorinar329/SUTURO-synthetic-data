@@ -725,7 +725,8 @@ def random_objects(x):
                                             instance_segmaps=seg_data["instance_segmaps"],
                                             instance_attribute_maps=seg_data["instance_attribute_maps"],
                                             colors=data["colors"],
-                                            color_file_format="JPEG")
+                                            color_file_format="JPEG",
+                                            mask_encoding_format="coco_annotations")
         bproc.writer.write_hdf5(output_path, data)
 
         far_left_bottom_object.set_location(far_left_bottom_object_initial_pos)

@@ -16,14 +16,41 @@ output_path="/home/sorin/code/blenderproc/output"
 #shutil.rmtree(output_path + "/coco_data")
 
 
+# for j, obj in enumerate(objs):
+#     obj_list = utils.create_list_from_id2json()
+#     print(obj.get_name())
+#     if obj.get_name() in obj_list:
+#         obj_id = utils.get_id_of_object(obj.get_name())
+#         obj.set_cp("category_id", obj_id)
+#     else:
+#         obj.set_cp("category_id", j + 10000)
+
+
+# for j, obj in enumerate(objs):
+#     obj_list = utils.create_list_from_id2json()
+#     print(obj.get_name())
+#     if obj.get_name() in obj_list:
+#         obj_id = utils.get_id_of_object(obj.get_name())
+#         obj.set_cp("category_id", obj_id)
+#     else:
+#         obj.set_cp("category_id", j + 10000)
 for j, obj in enumerate(objs):
     obj_list = utils.create_list_from_id2json()
-    print(obj.get_name())
-    if obj.get_name() in obj_list:
-        obj_id = utils.get_id_of_object(obj.get_name())
-        obj.set_cp("category_id", obj_id)
+    if obj.get_name().split("-")[0] in obj_list:
+        print(obj.get_name())
+        if "-" in obj.get_name():
+            obj_id = utils.get_id_of_object(obj.get_name().split("-")[0])
+
+            obj.set_cp("category_id", obj_id)
+        else:
+            obj_id = utils.get_id_of_object(obj.get_name())
+
+            obj.set_cp("category_id", obj_id)
     else:
+        print(1)
         obj.set_cp("category_id", j + 10000)
+
+
 
 furnitures = bproc.filter.by_attr(objs, "name", "Furniture.*", regex=True)
 
@@ -32,7 +59,8 @@ def init_objects():
     cracker_box = bproc.filter.one_by_attr(objs, "name", "CrackerBox")
     tuna_can = bproc.filter.one_by_attr(objs, "name", "TunaFishCan")
     tomato_soup = bproc.filter.one_by_attr(objs, "name", "TomatoSoupCan")
-    pudding_box = bproc.filter.one_by_attr(objs, "name", "JelloBox")
+    #pudding_box = bproc.filter.one_by_attr(objs, "name", "JelloBox")
+    cereal_green = bproc.filter.one_by_attr(objs, "name", "CerealBox-001")
     pear = bproc.filter.one_by_attr(objs, "name", "Pear")
     lemon = bproc.filter.one_by_attr(objs, "name", "Lemon")
     gelatine_box = bproc.filter.one_by_attr(objs, "name", "JellOStrawberryBox")
@@ -46,7 +74,7 @@ def init_objects():
     bowl = bproc.filter.one_by_attr(objs, "name", "Bowl")
     spoon = bproc.filter.one_by_attr(objs, "name", "Spoon")
 
-    list_of_objects = [cracker_box, tuna_can, tomato_soup, pudding_box, pear, lemon, gelatine_box, apple, strawberry,
+    list_of_objects = [cracker_box, tuna_can, tomato_soup, cereal_green, pear, lemon, gelatine_box, apple, strawberry,
                        mustard_bottle, coffe_can, banana, milk, cereal_box, bowl, spoon]
 
     return list_of_objects
@@ -107,17 +135,17 @@ def room_light(strength):
     light8.set_energy(strength)
     light9 = bproc.types.Light()
     light9.set_location([2.7, -3, 1.5])
-    light9.set_energy(70)
+    light9.set_energy(5)
 
 
-room_light(50)
+room_light(5)
 
 poi = [2.6, -0.5, 0.75]
 bproc.camera.set_resolution(640, 480)
 print(poi)
 
-locations = [[2.7, -1.9, 1.2], [2.7, -1.9, 1.0], [2.7, -2.9, 1.2], [2.7, -2.9, 1.0], [2.7, -2.4, 1.6], [2.1, -1.9, 1.2], [2.1, -1.9, 1.0], [3.1, -1.9, 1.2], [3.1, -1.9, 1.0]]
-
+#locations = [[2.7, -1.9, 1.2], [2.7, -1.9, 1.0], [2.7, -2.9, 1.2], [2.7, -2.9, 1.0], [2.7, -2.4, 1.6], [2.1, -1.9, 1.2], [2.1, -1.9, 1.0], [3.1, -1.9, 1.2], [3.1, -1.9, 1.0]]
+locations = [[2.7, -2.4, 1.6], [2.1, -1.9, 1.2]]
 
 def hide():
     for item in lob:
@@ -202,7 +230,7 @@ def deploy_scene(x):
 
 def pipeline():
     camera_poses()
-    deploy_scene(300)
+    deploy_scene(30)
 
 
 pipeline()
