@@ -1,10 +1,10 @@
 import json
 import os
 import shutil
-from natsort import natsorted
-from sklearn.model_selection import train_test_split
+#from natsort import natsorted
+#from sklearn.model_selection import train_test_split
 
-def create_list_from_id2json(path='/home/sorin/code/blenderproc/data/id2name.json'):
+def create_list_from_id2json(path='/home/suturo/Developer/blenderproc/SUTURO-synthetic-data/data/id2name.json'):
     with open(path) as json_file:
         data = json.load(json_file)
 
@@ -44,7 +44,7 @@ def convert_bbox_coco2yolo(img_width, img_height, bbox):
     return [x, y, w, h]
 
 
-def get_id_of_object(obj, path='/home/sorin/code/blenderproc/data/id2name.json'):
+def get_id_of_object(obj, path='/home/suturo/Developer/blenderproc/SUTURO-synthetic-data/data/id2name.json'):
     with open(path) as json_file:
         data = json.load(json_file)
 
@@ -174,10 +174,10 @@ def trainsplit(path_source):
     annotations.sort()
 
     # Split the dataset into train-valid-test splits
-    train_images, val_images, train_annotations, val_annotations = train_test_split(images, annotations, test_size=0.2,
+    train_images, val_images, train_annotations, val_annotations = train_test_split(images, annotations, test_size=0.05,
                                                                                     random_state=1)
     val_images, test_images, val_annotations, test_annotations = train_test_split(val_images, val_annotations,
-                                                                                  test_size=0.5, random_state=1)
+                                                                                  test_size=0.05, random_state=1)
 
     move_files_to_folder(train_images, path_source + "train/images")
     move_files_to_folder(val_images, path_source + "val/images")

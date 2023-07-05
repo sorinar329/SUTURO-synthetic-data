@@ -5,32 +5,18 @@ import shutil
 import json
 import random
 import sys
-sys.path.append("/home/sorin/code/blenderproc/src")
+sys.path.append("/home/suturo/Developer/blenderproc/SUTURO-synthetic-data/src")
 import utils
 
 
 bproc.init()
 rotation = np.random.uniform([0, 0, 0], [0, 0, 6])
-objs = bproc.loader.load_blend("/home/sorin/blenderdata/blender_data/robocup/scenes/synthetic-data.blend")
-output_path="/home/sorin/code/blenderproc/output"
+objs = bproc.loader.load_blend("/home/suturo/Developer/blender_data/robocup/scenes/robocup_table.blend")
+output_path="/home/suturo/Developer/blenderproc/SUTURO-synthetic-data/robocuptable1"
 #shutil.rmtree(output_path + "/coco_data")
 
 objs_to_annotate = []
-# for j, obj in enumerate(objs):
-#     obj_list = utils.create_list_from_id2json()
-#     if obj.get_name().split(".")[0] in obj_list:
-#         print(obj.get_name())
-#         if "-" in obj.get_name():
-#             obj_id = utils.get_id_of_object(obj.get_name().split("-")[0])
-#
-#             obj.set_cp("category_id", obj_id)
-#         else:
-#             obj_id = utils.get_id_of_object(obj.get_name())
-#
-#             obj.set_cp("category_id", obj_id)
-#     else:
-#         print(1)
-#         obj.set_cp("category_id", j + 10000)
+
 for j, obj in enumerate(objs):
     obj_list = utils.create_list_from_id2json()
     if "." in obj.get_name():
@@ -62,13 +48,30 @@ def init_objects():
     mustard_bottle = bproc.filter.one_by_attr(objs, "name", "MustardBottle")
     coffe_can = bproc.filter.one_by_attr(objs, "name", "CoffeeCan")
     banana = bproc.filter.one_by_attr(objs, "name", "Banana")
-    milk = bproc.filter.one_by_attr(objs, "name", "MilkPack")
-    cereal_box = bproc.filter.one_by_attr(objs, "name", "CerealBox")
+    banana1 = bproc.filter.one_by_attr(objs, "name", "Banana.001")
+    milk = bproc.filter.one_by_attr(objs, "name", "Milkbottle")
+    cereal_box = bproc.filter.one_by_attr(objs, "name", "Cerealboxrobocup")
+    cereal_box1 = bproc.filter.one_by_attr(objs, "name", "Cerealboxrobocup.001")
     bowl = bproc.filter.one_by_attr(objs, "name", "Bowl")
     spoon = bproc.filter.one_by_attr(objs, "name", "Spoon")
     fork = bproc.filter.one_by_attr(objs, "name", "Fork")
+    sponge = bproc.filter.one_by_attr(objs, "name", "AbrasiveSponge")
+    sponge1 = bproc.filter.one_by_attr(objs, "name", "AbrasiveSponge.001")
+    meat_can = bproc.filter.one_by_attr(objs, "name", "Pottedmeatcan")
+    baseball = bproc.filter.one_by_attr(objs, "name", "Baseball")
+    cleanser = bproc.filter.one_by_attr(objs, "name", "BleachCleanserBottle")
+    suncola = bproc.filter.one_by_attr(objs, "name", "Colacan")
+    dice = bproc.filter.one_by_attr(objs, "name", "Dice")
+    juicepack = bproc.filter.one_by_attr(objs, "name", "Juicepack")
+    soccerball = bproc.filter.one_by_attr(objs, "name", "MiniSoccerBall")
+    wine = bproc.filter.one_by_attr(objs, "name", "Winebottle")
+    rubiksCube = bproc.filter.one_by_attr(objs, "name", "Rubikscube")
+    tennisball = bproc.filter.one_by_attr(objs, "name", "TennisBall")
+    tropicalJuice = bproc.filter.one_by_attr(objs, "name", "Tropicaljuicebottle")
+    knife = bproc.filter.one_by_attr(objs, "name", "Knife")
+    iceTea = bproc.filter.one_by_attr(objs, "name", "Iceteabottle")
+    orangejuice = bproc.filter.one_by_attr(objs, "name", "Orangejuicebox")
 
-    meat_can = bproc.filter.one_by_attr(objs, "name", "MeatCan")
     cup = bproc.filter.one_by_attr(objs, "name", "MetalMug")
     plate = bproc.filter.one_by_attr(objs, "name", "MetalPlate")
     orange = bproc.filter.one_by_attr(objs, "name", "Orange")
@@ -82,7 +85,9 @@ def init_objects():
 
     list_of_objects = [cracker_box, tuna_can, tomato_soup, pudding_box, pear, lemon, gelatine_box, apple, strawberry,
                        mustard_bottle, coffe_can, banana, milk, cereal_box, spoon, bowl, plum, plate, pringles, pear1,
-                       peach, lemon1, apple1, banana1, banana, fork, meat_can, cup, orange, orange1, sugar_box]
+                       peach, lemon1, apple1, banana1, banana, fork, meat_can, cup, orange, orange1, sugar_box, suncola,
+                       cereal_box1, sponge1, dice, sponge, baseball, cleanser, juicepack, soccerball, wine, rubiksCube,
+                       tennisball, tropicalJuice, knife,iceTea, orangejuice]
 
     return list_of_objects
 
@@ -223,8 +228,8 @@ def deploy_scene(x):
 
 
 def pipeline():
-    camera_poses_random(10)
-    deploy_scene(80)
+    camera_poses_random(5)
+    deploy_scene(600)
 
 
 pipeline()
